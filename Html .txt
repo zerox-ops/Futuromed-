@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Démo Futuro-Médiéval</title>
+<style>
+  body { font-family: sans-serif; background: #111; color: #eee; margin:0; padding:0; }
+  .screen { display: none; padding:20px; }
+  .active { display:block; }
+  button { padding:10px 20px; margin:5px; background:#444; color:#eee; border:none; border-radius:5px; }
+</style>
+</head>
+<body>
+
+<div id="menu" class="screen active">
+  <h1>Choisis ta classe</h1>
+  <button onclick="start('furtif')">Assassin furtif</button>
+  <button onclick="start('techno')">Assassin techno</button>
+  <button onclick="start('plasma')">Archer plasma</button>
+</div>
+
+<div id="game" class="screen">
+  <h2 id="className"></h2>
+  <p id="stats"></p>
+  <button onclick="attack()">Attaquer le boss</button>
+  <p id="log"></p>
+</div>
+
+<script>
+const classes = {
+  furtif: { name:'Assassin furtif', atk:5, hp:20 },
+  techno: { name:'Assassin techno', atk:4, hp:25 },
+  plasma: { name:'Archer plasma', atk:6, hp:18 }
+};
+const boss = { name:'Golem de Fer', hp:50, atk:3 };
+let player, bossHp;
+
+function start(key) {
+  player = { ...classes[key] };
+  bossHp = boss.hp;
+  document.getElementById('className').textContent = player.name;
+  updateStats();
+  document.getElementById('log').textContent = '';
+  show('game');
+}
+
+function updateStats() {
+  document.getElementById('stats').textContent =
+    `PV : ${player.hp} | Attaque : ${player.atk} — Boss PV : ${bossHp}`;
+}
+
+function attack() {
+  bossHp -= player.atk;
+  let msg = `Tu frappes le boss (-${player.atk} PV).\n`;
+  if (bossHp > 0) {
+    player.hp -= boss.atk;
+    msg += `Le boss te riposte (-${boss.atk} PV).\n`;
+  }
+  if (bossHp <= 0) msg += '🎉 Boss vaincu !';
+  else if (player.hp <= 0) msg += '💀 Tu as été vaincu...';
+  document.getElementById('log').textContent = msg;
+  updateStats();
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+
+</body>
+</html>
